@@ -17,4 +17,4 @@ To call it from redis-cli:
 ## Authors
 
 **Stéphane Castrec**
-+ http//twitter.com/_stephane_
++ @\_stephane_
