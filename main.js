@@ -29,7 +29,6 @@ var manageRedisSub = function(){
         console.log('subscribe ' + " channel: "+ channel + " msg: "+ message);    
 	   if(channel == KEY_SUBSCRIBE_REDIS_MAIL_SEND){
            msg = JSON.parse(message);
-           console.log(msg.eventName + "  " + msg.destinations);
            
             mailLib.sendContent(msg.from, msg.destinations,
                 msg.subject, msg.type, msg.content);
