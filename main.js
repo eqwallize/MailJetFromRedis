@@ -3,7 +3,7 @@ var redisLib = require('redis');
 var Mailjet = require('mailjet-sendemail');
 var mailLib;
 var redisSub;
-var KEY_SUBSCRIBE_REDIS_SURVEY = 'mail.survey';
+var KEY_SUBSCRIBE_REDIS_MAIL_SEND = 'mail.send';
 var config = require('./config.json');
 var API_KEY = config.mailjet.api_key;
 var API_SECRET = config.mailjet.api_secret;
@@ -24,16 +24,15 @@ var connectRedis = function(){
 
 
 var manageRedisSub = function(){
-    redisSub.subscribe(KEY_SUBSCRIBE_REDIS_SURVEY);
+    redisSub.subscribe(KEY_SUBSCRIBE_REDIS_MAIL_SEND);
     redisSub.on("message", function(channel, message) { 
         console.log('subscribe ' + " channel: "+ channel + " msg: "+ message);    
-	   if(channel == KEY_SUBSCRIBE_REDIS){
-           var destinations = [];
-           for(var i = 0; i<message.destinations.length; i++){
-                destinations.push(message.destinations[i]);
-           }
-            mailLib.sendContent(message.from, destinations,
-                message.title, message.type, message.content);
+	   if(channel == KEY_SUBSCRIBE_REDIS_MAIL_SEND){
+           msg = JSON.parse(message);
+           console.log(msg.eventName + "  " + msg.destinations);
+           
+            mailLib.sendContent(msg.from, msg.destinations,
+                msg.subject, msg.type, msg.content);
        }
     });
 
