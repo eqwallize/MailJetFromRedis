@@ -1,0 +1,11 @@
+{
+  "name": "mailjetRedis",
+  "private": true,
+  "version": "0.0.1",
+  "description": "",
+  "author": "Stéphane Castrec <stephane@eqwall.com>",
+  "dependencies": {
+    "mailjet-sendemail": "",
+    "redis": ""
+  }
+}
