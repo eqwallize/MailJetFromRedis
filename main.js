@@ -34,19 +34,22 @@ var connectRedisSub = function(){
 var manageRedisSub = function(){
     redisSub.on("message", function(channel, message) { 
         console.log('subscribe ' + " channel: "+ channel + " msg: "+ message);    
-        if(channel == KEY_SUBSCRIBE_REDIS_MAIL_SEND){
-           msg = JSON.parse(message);
-           
-            mailLib.sendContent(msg.from, msg.destinations,
-                msg.subject, msg.type, msg.content);
-       }       
+        try {
+		if(channel == KEY_SUBSCRIBE_REDIS_MAIL_SEND){
+           		msg = JSON.parse(message);
+            		mailLib.sendContent(msg.from, msg.destinations,
+                		msg.subject, msg.type, msg.content);
+       		}     
+	}catch(e){
+		console.log("error sending email " + message + "error: " +e );
+	}  
     });
     redisSub.on("connect", function(message){
         redisSub.subscribe(KEY_SUBSCRIBE_REDIS_MAIL_SEND);
     });    
     redisSub.on("error", function(message){
         //Deal with error
-        console.log('error redis disconnected ' + message);    
+        console.log('error redis' + message);    
     });
     
     redisSub.on("end", function(message){
