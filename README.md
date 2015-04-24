@@ -16,5 +16,11 @@ To call it from redis-cli:
 
 ## Authors
 
+## Warning
+Commited a custom version of mailjet. 
+This custom version manage correctly multiple recipients. 
+To remove when pull request will be done and accepted.
+Sorry about that.
+
 **Stéphane Castrec**
 + @\_stephane_
