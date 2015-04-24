@@ -8,6 +8,8 @@ var config = require('./config.json');
 var API_KEY = config.mailjet.api_key;
 var API_SECRET = config.mailjet.api_secret;
 
+var MAX_MAIL_ONCE = 49;
+
 //Redis info
 var port = process.env.REDIS_PORT_6379_TCP_PORT;
 var host = process.env.REDIS_PORT_6379_TCP_ADDR;
@@ -30,19 +32,47 @@ var connectRedisSub = function(){
     }
 };
 
+/** 
+ * In charge of asking mailJet to send emails. 
+ * If too much recipients, send multiple mails
+ */
+var sendMail = function(redisMessage){
+    msg = JSON.parse(redisMessage);
+        var nbIt = msg.destinations.length/MAX_MAIL_ONCE;
+        var nbRest = msg.destinations.length%MAX_MAIL_ONCE;
+        console.log("nbIt:"+nbIt);
+        console.log("nbRest:"+nbRest);
+        for(var i =0; i < nbIt*MAX_MAIL_ONCE; i = i+MAX_MAIL_ONCE){
+            console.log("i:"+i);
+            var tab = msg.destinations.slice(i, i + MAX_MAIL_ONCE); 
+            tab.push("to:contact@eqwall.com");
+            console.log(tab);
+
+            mailLib.sendContent(msg.from, tab,
+                msg.subject, msg.type, msg.content);
+        }
+        //manage rest
+        if(nbRest != 0){
+           var tab = msg.destinations.slice(msg.destinations.length-nbRest, msg.destinations.length); 
+            console.log(tab);
+            tab.push("to:contact@eqwall.com");
+            mailLib.sendContent(msg.from, tab,
+                msg.subject, msg.type, msg.content); 
+        }
+    
+}
+
 /** manage redis pub/sub. */
 var manageRedisSub = function(){
     redisSub.on("message", function(channel, message) { 
         console.log('subscribe ' + " channel: "+ channel + " msg: "+ message);    
         try {
-		if(channel == KEY_SUBSCRIBE_REDIS_MAIL_SEND){
-           		msg = JSON.parse(message);
-            		mailLib.sendContent(msg.from, msg.destinations,
-                		msg.subject, msg.type, msg.content);
+		  if(channel == KEY_SUBSCRIBE_REDIS_MAIL_SEND){
+           		sendMail(message);
        		}     
-	}catch(e){
-		console.log("error sending email " + message + "error: " +e );
-	}  
+        }catch(e){
+            console.log("error sending email " + message + "error: " +e );
+        }  
     });
     redisSub.on("connect", function(message){
         redisSub.subscribe(KEY_SUBSCRIBE_REDIS_MAIL_SEND);
