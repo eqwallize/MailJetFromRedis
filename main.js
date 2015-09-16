@@ -14,6 +14,21 @@ var MAX_MAIL_ONCE = 49;
 var port = process.env.REDIS_PORT_6379_TCP_PORT;
 var host = process.env.REDIS_PORT_6379_TCP_ADDR;
 
+var mailParser = function(recipient_list){
+        var return_vals = {
+            'to': [],
+            'cc': [],
+            'bcc': []
+        }
+    for (var i = 0; i < recipient_list.length; ++i) {
+        var parsed = recipient_list[i].split(':');
+        (parsed.length > 1) ? return_vals[parsed[0]].push(parsed[1])
+            : return_vals['to'].push(parsed[0]);
+    }
+    return return_vals;
+
+}
+
 var connectRedisSub = function(){
     console.log("connect");
     try {
@@ -32,34 +47,48 @@ var connectRedisSub = function(){
     }
 };
 
+/**
+ * Send mail to hided content.
+ * They will just receive a copy.
+ * @param bcc
+ */
+var sendToBcc = function(bcc){
+    var nbIt = Math.trunc(bcc.length/MAX_MAIL_ONCE);
+    var nbRest = bcc.length%MAX_MAIL_ONCE;
+
+    for(var i =0; i < nbIt*MAX_MAIL_ONCE; i = i+MAX_MAIL_ONCE){
+        var tab = msg.destinations.slice(i, i + MAX_MAIL_ONCE);
+        //we NEED to have at least one to, so use default one.
+        tab.push("to:"+config.defaultMail);
+        mailLib.sendContent(msg.from, tab,
+            msg.subject, msg.type, msg.content);
+    }
+    //manage rest
+    if(nbRest != 0){
+        var tab = msg.destinations.slice(msg.destinations.length-nbRest, msg.destinations.length);
+        tab.push("to:"+config.defaultMail);
+        mailLib.sendContent(msg.from, tab,
+            msg.subject, msg.type, msg.content);
+    }
+};
+
 /** 
  * In charge of asking mailJet to send emails. 
  * If too much recipients, send multiple mails
  */
 var sendMail = function(redisMessage){
     msg = JSON.parse(redisMessage);
-        var nbIt = msg.destinations.length/MAX_MAIL_ONCE;
-        var nbRest = msg.destinations.length%MAX_MAIL_ONCE;
-        console.log("nbIt:"+nbIt);
-        console.log("nbRest:"+nbRest);
-        for(var i =0; i < nbIt*MAX_MAIL_ONCE; i = i+MAX_MAIL_ONCE){
-            console.log("i:"+i);
-            var tab = msg.destinations.slice(i, i + MAX_MAIL_ONCE); 
-            tab.push("to:contact@eqwall.com");
-            console.log(tab);
 
-            mailLib.sendContent(msg.from, tab,
-                msg.subject, msg.type, msg.content);
-        }
-        //manage rest
-        if(nbRest != 0){
-           var tab = msg.destinations.slice(msg.destinations.length-nbRest, msg.destinations.length); 
-            console.log(tab);
-            tab.push("to:contact@eqwall.com");
-            mailLib.sendContent(msg.from, tab,
-                msg.subject, msg.type, msg.content); 
-        }
-    
+    var destinations = mailParser(msg.destinations);
+
+    if(destinations["bcc"].length > 0){
+        //bcc are different because need to hide them
+        sendToBcc(destinations["bcc"]);
+    }
+
+    //DO next time: add a way to manage limitation for cc and to
+    mailLib.sendContent(msg.from, destinations["to"].concat(destinations["cc"]), msg.subject, msg.type, msg.content);
+
 }
 
 /** manage redis pub/sub. */
