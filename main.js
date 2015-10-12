@@ -13,6 +13,8 @@ var MAX_MAIL_ONCE = 49;
 //Redis info
 var port = process.env.REDIS_PORT_6379_TCP_PORT;
 var host = process.env.REDIS_PORT_6379_TCP_ADDR;
+var pwd = process.env.REDIS_PWD;
+
 
 var mailParser = function(recipient_list){
         var return_vals = {
@@ -34,7 +36,10 @@ var connectRedisSub = function(){
     try {
         //if env var exist, user it
         if(port && host){
-            redisSub = redisLib.createClient(port, host);
+            var options = {
+                auth_pass : pwd
+            };
+            redis = redisLib.createClient(port, host, options);
         } else {
             //else give a try to default
             redisSub = redisLib.createClient();
