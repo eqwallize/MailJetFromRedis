@@ -36,10 +36,16 @@ var connectRedisSub = function(){
     try {
         //if env var exist, user it
         if(port && host){
-            console.log("connect to host with pwd : "+host+":"+port);
+            console.log("connect to host  : "+host+":"+port);
             var options = {
-                auth_pass : pwd
             };
+            if(pwd){
+                console.log("redis with pwd  ");
+                options.auth_pass = pwd;
+            } else {
+                console.log("redis no pwd  ");
+            }
+
             redisSub = redisLib.createClient(port, host, options);
         } else {
             //else give a try to default
