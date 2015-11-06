@@ -65,7 +65,7 @@ var connectRedisSub = function(){
  * @param bcc
  */
 var sendToBcc = function(bcc){
-    var nbIt = Math.trunc(bcc.length/MAX_MAIL_ONCE);
+    var nbIt = Math.floor(bcc.length/MAX_MAIL_ONCE);
     var nbRest = bcc.length%MAX_MAIL_ONCE;
 
     for(var i =0; i < nbIt*MAX_MAIL_ONCE; i = i+MAX_MAIL_ONCE){
