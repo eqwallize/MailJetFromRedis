@@ -5,7 +5,9 @@
   "description": "",
   "author": "Stéphane Castrec <stephane@eqwall.com>",
   "dependencies": {
+    "apn": "^1.7.5",
     "mailjet-sendemail": "",
+    "node-gcm": "^0.14.0",
     "redis": ""
   }
 }

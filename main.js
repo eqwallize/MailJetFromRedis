@@ -1,9 +1,13 @@
 //initialize redis
 var redisLib = require('redis');
 var Mailjet = require('mailjet-sendemail');
+var push = require('./push/push');
 var mailLib;
 var redisSub;
+
 var KEY_SUBSCRIBE_REDIS_MAIL_SEND = 'mail.send';
+var KEY_SUBSCRIBE_REDIS_PUSH_SEND = 'push.send';
+
 var config = require('./config.json');
 var API_KEY = config.mailjet.api_key;
 var API_SECRET = config.mailjet.api_secret;
@@ -110,9 +114,11 @@ var manageRedisSub = function(){
         try {
 		  if(channel == KEY_SUBSCRIBE_REDIS_MAIL_SEND){
            		sendMail(message);
+       	    } else if(channel == KEY_SUBSCRIBE_REDIS_PUSH_SEND){
+           		push.sendPush(message);
        		}     
         }catch(e){
-            console.log("error sending email " + message + "error: " +e );
+            console.log("error sending "+channel+  "  " + message + "error: " +e );
         }  
     });
     redisSub.on("connect", function(message){
