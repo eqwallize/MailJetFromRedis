@@ -8,11 +8,33 @@ To call it from redis-cli:
 * PUBLISH mail.send '{"from":"dummy@mail.com", "content":"mail content de test", "type":"text", "destinations":["stephane.castrec@gmail.com","cc:stephane@eqwall.com", "bcc:stephane.castrec@facebook.com"], "subject":"mail subject"}'
 * d
 ## Dependencies
-* npm install redis
-* npm install mailjet-sendemail
+* npm install
+** redis
+** mailjet
+** node-apn
+** node-gcm
 
 ## run
 * node main.js
+
+## Config
+'
+{
+    "mailjet":{
+        "api_key":"",
+        "api_secret":""
+    },
+    "gcm":{
+        "api_key":""
+    },
+    "apn":{
+        "cert":"",
+        "key":""
+    },
+    "defaultMail":""
+}
+'
+
 
 ## Authors
 

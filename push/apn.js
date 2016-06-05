@@ -5,7 +5,10 @@
 var apn = require('apn');
 var config = require('../config.json');
 
-var options = { };
+var options = {
+    cert: config.apn.cert,
+    key: config.apn.key
+};
 var apnConnection = new apn.Connection(options);
 
 module.export = {
@@ -21,8 +24,8 @@ module.export = {
         };
 
         //then send, to all devices
-        for(device in devices){
-            apnConnection.pushNotification(note, registrationTokens);
+        for(var i=0; i<registrationTokens.length; i++){
+            apnConnection.pushNotification(note, registrationTokens[i]);
         }
     }
 };
