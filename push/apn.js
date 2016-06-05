@@ -1,6 +1,6 @@
 /**
  * doc here
- * https://github.com/ToothlessGear/node-apn
+ * https://github.com/argon/node-apn
  */
 var apn = require('apn');
 var config = require('../config.json');
@@ -9,7 +9,7 @@ var options = { };
 var apnConnection = new apn.Connection(options);
 
 module.export = {
-    sendPush : function(title, body, devices){
+    sendPush : function(title, body, registrationTokens){
         //create notification
         var note = new apn.Notification();
 
@@ -19,11 +19,10 @@ module.export = {
             title: title,
             body: body
         };
-        note.payload = {'messageFrom': 'Caroline'};
 
         //then send, to all devices
         for(device in devices){
-            apnConnection.pushNotification(note, myDevice);
+            apnConnection.pushNotification(note, registrationTokens);
         }
     }
 };
