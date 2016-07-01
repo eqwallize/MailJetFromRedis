@@ -6,7 +6,7 @@ Subscribe to redis to get order to send emails
 
 To call it from redis-cli: 
 * PUBLISH mail.send '{"from":"dummy@mail.com", "content":"mail content de test", "type":"text", "destinations":["stephane.castrec@gmail.com","cc:stephane@eqwall.com", "bcc:stephane.castrec@facebook.com"], "subject":"mail subject"}'
-* d
+* PUBLISH push.send '{"title":"Titre du message", "body":"Texte du message à envoyer", "devices"[{"pushToken":"UUID1", "type":"APN"}, {"pushToken":"UUID2", "type":"GCM"} ]}'
 ## Dependencies
 * npm install
 ** redis
