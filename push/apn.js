@@ -11,7 +11,7 @@ var options = {
 };
 var apnConnection = new apn.Connection(options);
 
-module.export = {
+module.exports = {
     sendPush : function(title, body, registrationTokens){
         //create notification
         var note = new apn.Notification();

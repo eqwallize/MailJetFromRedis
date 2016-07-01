@@ -4,11 +4,13 @@ var gcm = require('./gcm')
 module.exports = {
  
     sendPush : function(redisMessage){
-        var dest = separateDestinations(redisMessage);
+        var msg = JSON.parse(redisMessage);
+
+        var dest = separateDestinations(msg);
         //send messages over apns
-        apn.sendPush(redisMessage.title, redisMessage.body, dest.apn);
+        apn.sendPush(msg.title, msg.body, dest.apn);
         //send messages over GCM
-        gcm.sendPush(redisMessage.title, redisMessage.body , dest.gcm);
+        gcm.sendPush(msg.title, msg.body , dest.gcm);
     }
 };
 
