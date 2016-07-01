@@ -62,6 +62,7 @@ var manageRedisSub = function(){
     });
     redisSub.on("connect", function(message){
         redisSub.subscribe(KEY_SUBSCRIBE_REDIS_MAIL_SEND);
+        redisSub.subscribe(KEY_SUBSCRIBE_REDIS_PUSH_SEND);
     });    
     redisSub.on("error", function(message){
         //Deal with error
