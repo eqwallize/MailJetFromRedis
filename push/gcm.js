@@ -9,27 +9,20 @@ var sender = new gcm.Sender(config.gcm.api_key);
 
 module.exports = {
  
-    sendPush : function(title, body, registrationTokens){
+  sendPush : function(title, body, registrationTokens){
         // create message
         var message = new gcm.Message({
-            collapseKey: 'demo',
-            priority: 'high',
-            contentAvailable: true,
+            collapseKey: 'eqwall',
             delayWhileIdle: true,
             timeToLive: 3,
-            restrictedPackageName: "somePackageName",
-            dryRun: true,
+            restrictedPackageName: "com.eqwall.android",
             notification: {
                 title: title,
-                body: body
-            },
-            data: {
-                title: title,
-                body: body
+                body: body,
+                icon: "ic_launcher"
             }
         });
-        
-        
+
         //send with 10 retries
         sender.send(message, { registrationTokens: registrationTokens }, 10, function (err, response) {
           if(err) console.error(err);
@@ -37,4 +30,5 @@ module.exports = {
         });
 
     }
+
 };
