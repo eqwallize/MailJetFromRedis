@@ -1,0 +1,14 @@
+{
+    "mailjet":{
+        "api_key":"6034e4a59d985d5ebb9b81903553ca2e",
+        "api_secret":"c9265a93c439384216159199fbacd886"
+    },
+    "gcm":{
+        "api_key":"AIzaSyCu2pLZew-S1ohlXElwY_CVhtzMXNempSI"
+    },
+    "apn":{
+        "cert":"cert/cert.pem",
+        "key":"cert/key.pem"
+    },
+    "defaultMail":"contact@eqwall.com"
+}

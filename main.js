@@ -2,10 +2,12 @@
 var redisLib = require('redis');
 var push = require('./push/push');
 var mail = require('./mail/mail');
+var subs = require('./subscribe/subscribe');
 var redisSub;
 
 var KEY_SUBSCRIBE_REDIS_MAIL_SEND = 'mail.send';
 var KEY_SUBSCRIBE_REDIS_PUSH_SEND = 'push.send';
+var KEY_SUBSCRIBE_REDIS_USER_SUBS = 'user.subscribe';
 
 var config = require('./config.json');
 
@@ -55,6 +57,8 @@ var manageRedisSub = function(){
            		mail.sendMail(message);
        	    } else if(channel == KEY_SUBSCRIBE_REDIS_PUSH_SEND){
            		push.sendPush(message);
+       		} else if(channel == KEY_SUBSCRIBE_REDIS_USER_SUBS){
+           		subs.subscribeUser(message);
        		}     
         }catch(e){
             console.log("error sending "+channel+  "  " + message + "error: " +e );
@@ -63,6 +67,7 @@ var manageRedisSub = function(){
     redisSub.on("connect", function(message){
         redisSub.subscribe(KEY_SUBSCRIBE_REDIS_MAIL_SEND);
         redisSub.subscribe(KEY_SUBSCRIBE_REDIS_PUSH_SEND);
+        redisSub.subscribe(KEY_SUBSCRIBE_REDIS_USER_SUBS);
     });    
     redisSub.on("error", function(message){
         //Deal with error
